@@ -53,10 +53,3 @@ acf(Serie_B_Diff, main = "FAC Serie B Dif", col = "green")
 pacf(Serie_A, main = "FACP Serie A", col = "red") 
 pacf(Serie_B_Diff, main = "FACP Serie B Dif", col = "green") #Ahora si parece ser estacionario  
 
-#Modelizamos
-M1_SerieA<-arima(Serie_A,order = c(1,0,1))
-M1_SerieA
-
-M1_SerieB<-arima(Serie_B_Diff,c(1,1,1))
-M1_SerieB #Hay raiz unitaria, por lo tanto no es estacionario
-
