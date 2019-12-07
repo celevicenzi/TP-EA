@@ -52,4 +52,31 @@ pacf(Serie_A, main = "FACP Serie A", col = "red")
 pacf(Serie_B_Diff, main = "FACP Serie B Dif", col = "green") #Ahora si parece ser estacionario  
 
 ###Prueba###
+-#Modelizamos ---> Primero hay que testear
+  M1_SerieA<-arima(Serie_A,order = c(1,0,0))
+M1_SerieA
 
+M2_SerieA<-arima(Serie_A,order = c(0,0,2))
+M2_SerieA
+
+M3_SerieA<-arima(Serie_A,order = c(1,0,1))
+M3_SerieA
+
+M4_SerieA<-arima(Serie_A,order=c(2,0,1))
+M4_SerieA
+
+M5_SerieA<-arima(Serie_A,order=c(2,0,2))
+M5_SerieA
+
+M6_SerieA<-arima(Serie_A,order=c(1,1,1))
+M6_SerieA
+
+M7_SerieA<-arima(Serie_A,order=c(2,1,0))
+M7_SerieA
+
+M8_SerieA<-arima(Serie_A,order=c(1,2,2))
+M8_SerieA
+
+
+M1_SerieB<-arima(Serie_B_Diff,c(1,1,1))
+M1_SerieB #Hay raiz unitaria, por lo tanto no es estacionario
