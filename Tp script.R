@@ -18,7 +18,9 @@ library(psych)
 
 describe(Data,quant = c(0,0.25,0.5,0.75,1)) #Analisis descriptivo
 #skew es la asmimetria. Se encuentran cercanos a 0
+#Analizamos la Kurtosis de ambas series
 
+kurtosi(Data) #Ambas son planicurticas
 #Graficamos el Boxplot
 par(mfrow = c(1,2))
 boxplot(Serie_A,main = "Box Plot Serie A Grupo 13", col = "red")
