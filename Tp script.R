@@ -49,5 +49,5 @@ acf(Serie_B_Diff, main = "FAC Serie B Dif", col = "green")
 pacf(Serie_A, main = "FACP Serie A", col = "red") 
 pacf(Serie_B_Diff, main = "FACP Serie B Dif", col = "green") #Ahora si parece ser estacionario  
 
-
+###Prueba###
 
