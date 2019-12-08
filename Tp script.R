@@ -4,6 +4,7 @@ library(tseries)
 library(urca)
 library(ggplot2)
 library(forecast)
+library(plotly)
 
 Data<-read.csv2(file = "Grupo 13.csv")
 
