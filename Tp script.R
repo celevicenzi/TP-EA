@@ -18,11 +18,18 @@ plot(ts(Serie_B), main = "Serie B Grupo 13", col = "green")
 #Instalar el paquete "psych" para poder utilizar la funcion describe
 library(psych)
 #ANÁLISIS DESCRIPTIVO#
-describe(Data,quant = c(0,0.25,0.5,0.75,1)) 
+Analisis.1<-describe(Data1,quant = c(0,0.25,0.5,0.75,1)) #Analisis descriptivo
 #skew es la asmimetria. Se encuentran cercanos a 0
 
 #Analizamos la Kurtosis de ambas series
-kurtosi(Data) #Ambas son planicurticas
+Kurtosis<-kurtosi(Data1) #Ambas son planicurticas
+
+#Varianza
+Varianza<-var(Data1)
+colnames(Varianza)<-c("Var Serie A", "Var Serie B")
+
+#Unificamos lo calculado hasta ahora
+Analisis.Total<-data.frame(Analisis.1,Kurtosis,Varianza) 
 
 #Graficamos el Boxplot
 par(mfrow = c(1,2))
@@ -30,6 +37,7 @@ boxplot(Serie_A,main = "Box Plot Serie A Grupo 13", col = "red")
 boxplot(Serie_B,main = "Box Plot Serie B Grupo 13", col = "green")
 
 #Densidad
+par(mfrow = c(1,2))
 plot(density(Serie_A),main="Densidad",xlab="N=100",col="red")
 plot(density(Serie_B),main="Densidad",xlab="N=100",col="green")
 
@@ -38,7 +46,7 @@ hist(Serie_A, breaks=20, main="Histograma Serie A Grupo 13", col="red")
 hist(Serie_B,breaks=20, main="Histograma Serie B Grupo 13", col="green")
 
 #FAS, FAC y FACP
-par(mfrow = c(2,2))
+par(mfrow = c(4,2))
 plot(ts(Serie_A), main = "Serie A Grupo 13", col = "red") 
 plot(ts(Serie_B), main = "Serie B Grupo 13", col = "green")
 acf(Serie_A, type="covariance", main="FAS Serie A", col="red")
@@ -49,21 +57,113 @@ pacf(Serie_A, main = "FACP Serie A", col = "red")
 pacf(Serie_B, main = "FACP Serie B", col = "green") 
 #Otra vez, en primera instancia la serie B no es estacionaria
 
-#Prueba de estacionariedad
-library(tseries)
-#Diferenciamos las series
-Serie_A_Diff<-diff(Serie_A)
-Serie_B_Diff<-diff(Serie_B) 
-#Prueba de Dickey-Fuller Aumentado Serie A
-none.df<-ur.df(Serie_A_Diff,type="none",lags=5,selectlags=c("AIC"))
-drift.df<-ur.df(Serie_A_Diff,type="drift",lags=5,selectlags=c("AIC"))
-trend.df<-ur.df(Serie_A_Diff,type="trend",lags=5,selectlags=c("AIC"))
+##### SERIE A #####
+auto.arima(Serie_A, stepwise = FALSE, approximation = FALSE)
+#Segun auto.arima, el mejor modelo es una MA(3)
+ndiffs(Serie_A)
+#Segun ndiffs, no hay que diferenciar la serie
 
-summary(none.df)
-summary(drift.df)
-summary(trend.df)
+#Test de Dickey Fuller
+#Para el estadistico de prueba
+none.df<-ur.df(Serie_A,type="none",lags=5,selectlags=c("AIC"))
+drift.df<-ur.df(Serie_A,type="drift",lags=5,selectlags=c("AIC"))
+trend.df<-ur.df(Serie_A,type="trend",lags=5,selectlags=c("AIC"))
 
-adf.test(Serie_A_Diff)
+#Para los valores criticos
+Detalle_none_df<-summary(none.df)
+Detalle_drift_df<-summary(drift.df)
+Detalle_trend_df<-summary(trend.df)
+
+#Para ver si es estacionario sin tendencia ni termino independiente
+for (i in 1:length(Detalle_none_df@cval)) {
+  Resultado_none<-none.df@teststat<Detalle_none_df@cval[1,i]
+  print(Resultado_none)  
+  if (Resultado_none == TRUE) {
+    print("Es estacionario")
+  }else{
+    print("No es estacionario")
+  }
+}
+
+#Para ver si es estacionario sin tendencia pero con termino independiente
+for (i in 1:length(Detalle_drift_df@cval[1,])) {
+  Resultado_drift<-drift.df@teststat[1,1]<Detalle_drift_df@cval[1,i]
+  print(Resultado_drift)  
+  if (Resultado_drift == TRUE) {
+    print("Es estacionario")
+  }else{
+    print("No es estacionario")
+  }
+}
+
+#Para ver si es estacionario con tendencia y con termino independiente
+for (i in 1:length(Detalle_trend_df@cval[1,])) {
+  Resultado_trend<-trend.df@teststat[1,1]<Detalle_trend_df@cval[1,i]
+  print(Resultado_trend)  
+  if (Resultado_trend == TRUE) {
+    print("Es estacionario")
+  }else{
+    print("No es estacionario")
+  }
+}
+
+#Creamos distintos modelos
+M1_SerieA<-arima(Serie_A,order = c(1,0,0))
+M1_SerieA
+
+M2_SerieA<-arima(Serie_A,order = c(0,0,1))
+M2_SerieA
+
+M3_SerieA<-arima(Serie_A,order = c(1,0,1))
+M3_SerieA
+
+M3_SerieA<-arima(Serie_A,order = c(2,0,1))
+M3_SerieA
+
+M4_SerieA<-arima(Serie_A,order = c(1,0,2))
+M4_SerieA
+
+M5_SerieA<-arima(Serie_A,order = c(2,0,2))
+M5_SerieA
+
+M6_SerieA<-arima(Serie_A,order = c(3,0,0))
+M6_SerieA
+
+M7_SerieA<-arima(Serie_A,order = c(3,0,1))
+M7_SerieA
+
+M8_SerieA<-arima(Serie_A,order = c(0,0,3))
+M8_SerieA
+
+M9_SerieA<-arima(Serie_A,order = c(1,0,3))
+M9_SerieA
+
+M10_SerieA<-arima(Serie_A,order = c(3,0,3))
+M10_SerieA
+
+#Unificamos los AIC y los BIC
+Serie_A_aic<-AIC(M1_SerieA,M2_SerieA,M3_SerieA,M4_SerieA,M5_SerieA,M6_SerieA,M7_SerieA,M8_SerieA,M9_SerieA,M10_SerieA)
+Serie_A_bic<-BIC(M1_SerieA,M2_SerieA,M3_SerieA,M4_SerieA,M5_SerieA,M6_SerieA,M7_SerieA,M8_SerieA,M9_SerieA,M10_SerieA)
+
+#Comparamos los AIC y los BIC de los distintos modelos
+Modelo_Serie_A<-cbind(Serie_A_aic,Serie_A_bic)
+Modelo_Serie_A
+#El Modelo MA(3) es el que mejor ajusta, y un modelos MA siempre es estacionario
+
+#Esto es un intento de obtener los AIC y los BIC de varios modelos ARIMA sin necesidad de hacer 1 por 1. Todavia no esta terminado\
+
+for (i in 0:5) {
+  for(j in 0:5){
+    if(j!=0 | i!=0){
+      m<-arima(Serie_A,order=c(i,0,j))
+      Modelo_Serie_A<-cbind(AIC(m),BIC(m))
+      rownames(Modelo_Serie_A)<-print(paste("Modelo",i,j))
+      colnames(Modelo_Serie_A)<-c("AIC","BIC")
+      print(Modelo_Serie_A)
+    }
+  }
+}
+
 
 #Prueba de Dickey-Fuller Aumentado Serie B
 none.df<-ur.df(Serie_B_Diff,type="none",lags=5,selectlags=c("AIC"))
