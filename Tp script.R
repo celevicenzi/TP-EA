@@ -189,21 +189,21 @@ P2<-as.data.frame(Pre2)
 P2<-data.frame(P2[,6],P2[,4],P2[,2],P2[,1],P2[,3],P2[,5],P2[,7])
 colnames(P2)<-c("LI 99%","LI 97,5%","LI 95%","Predicción","LS 95%","LS 97,5%","LS 99%")
 P2
-#Predicción para cinco horizontes.
-Pre5<-forecast(MA_3, level = c(95,97.5,99), h = 5)
-plot(Pre5, main = "Prediccion 5 periodos")
-P5<-as.data.frame(Pre5)
-P5<-data.frame(P5[,6],P5[,4],P5[,2],P5[,1],P5[,3],P5[,5],P5[,7])
-colnames(P5)<-c("LI 99%","LI 97,5%","LI 95%","Predicción","LS 95%","LS 97,5%","LS 99%")
-P5
-#Predicción para diez horizontes.
-Pre10<-forecast(MA_3, level = c(95,97.5,99), h = 10)
-plot(Pre10, main = "Prediccion 10 periodos")
-P10<-as.data.frame(Pre10)
-P10<-data.frame(P10[,6],P10[,4],P10[,2],P10[,1],P10[,3],P10[,5],P10[,7])
-colnames(P10)<-c("LI 99%","LI 97,5%","LI 95%","Predicción","LS 95%","LS 97,5%","LS 99%")
-rownames(P10)<-c(1:10)
-
+#Predicción para tres horizontes.
+Pre3<-forecast(MA_3, level = c(95,97.5,99), h = 3)
+plot(Pre3, main = "Prediccion 3 periodos")
+P3<-as.data.frame(Pre5)
+P3<-data.frame(P3[,6],P3[,4],P3[,2],P3[,1],P3[,3],P3[,5],P3[,7])
+colnames(P3)<-c("LI 99%","LI 97,5%","LI 95%","Predicción","LS 95%","LS 97,5%","LS 99%")
+P3
+#Predicción para 20 horizontes.
+Pre20<-forecast(MA_3, level = c(95,97.5,99), h = 20)
+plot(Pre20, main = "Prediccion 20 periodos")
+P20<-as.data.frame(Pre10)
+P20<-data.frame(P20[,6],P20[,4],P20[,2],P20[,1],P20[,3],P20[,5],P20[,7])
+colnames(P20)<-c("LI 99%","LI 97,5%","LI 95%","Predicción","LS 95%","LS 97,5%","LS 99%")
+rownames(P20)<-c(1:20)
+P20
 
 par(mfrow=c(2,2))
 plot(MA_3$residuals,col="red",main="Residuos MA(3)")
