@@ -17,7 +17,7 @@ plot(ts(Serie_B), main = "Serie B Grupo 13", col = "green")
 
 #Instalar el paquete "psych" para poder utilizar la funcion describe
 library(psych)
-#ANÁLISIS DESCRIPTIVO#
+#ANÃLISIS DESCRIPTIVO#
 describe(Data,quant = c(0,0.25,0.5,0.75,1)) 
 #skew es la asmimetria. Se encuentran cercanos a 0
 
@@ -92,7 +92,7 @@ acf(Serie_B_Diff, main = "FAC Serie B Dif", col = "green")
 pacf(Serie_A, main = "FACP Serie A", col = "red") 
 pacf(Serie_B_Diff, main = "FACP Serie B Dif", col = "green") #Ahora si parece ser estacionario  
 
-###Prueba###
+
 -#Modelizamos ---> Primero hay que testear
 M1_SerieA<-arima(Serie_A,order = c(1,0,0))
 M1_SerieA
