@@ -43,7 +43,12 @@ par(mfrow = c(1,2))
 plot(density(Serie_A),main="Densidad",xlab="N=100",col="red")
 plot(density(Serie_B),main="Densidad",xlab="N=100",col="green")
 
+par(mfrow = c(1,1))
+plot(density(Serie_B),main="Densidad",xlab="N=100",col="green")
+lines(density(Serie_A), col="red")
+
 #Histograma
+par(mfrow = c(1,2))
 hist(Serie_A, breaks=20, main="Histograma Serie A Grupo 13", col="red")
 hist(Serie_B,breaks=20, main="Histograma Serie B Grupo 13", col="green")
 
