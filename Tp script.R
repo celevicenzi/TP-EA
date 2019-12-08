@@ -94,30 +94,86 @@ pacf(Serie_B_Diff, main = "FACP Serie B Dif", col = "green") #Ahora si parece se
 
 
 -#Modelizamos ---> Primero hay que testear
+#Hay una forma simple de hacerla, que es con una funcion de AUTO.ARIMA, que nos dice el mejor modelo. Pero para comparar, se va a hacer completo
+
+auto.arima(Serie_A,stationary = TRUE) #stationary TRUE para que me indique modelos estacionarioa 
+#El modelo nos da un MA(3), y una MA siempre es estacionario.
+
 M1_SerieA<-arima(Serie_A,order = c(1,0,0))
 M1_SerieA
 
-M2_SerieA<-arima(Serie_A,order = c(0,0,2))
+M2_SerieA<-arima(Serie_A,order = c(0,0,1))
 M2_SerieA
 
 M3_SerieA<-arima(Serie_A,order = c(1,0,1))
 M3_SerieA
 
-M4_SerieA<-arima(Serie_A,order=c(2,0,1))
+M3_SerieA<-arima(Serie_A,order = c(2,0,1))
+M3_SerieA
+
+M4_SerieA<-arima(Serie_A,order = c(1,0,2))
 M4_SerieA
 
-M5_SerieA<-arima(Serie_A,order=c(2,0,2))
+M5_SerieA<-arima(Serie_A,order = c(2,0,2))
 M5_SerieA
 
-M6_SerieA<-arima(Serie_A,order=c(1,1,1))
+M6_SerieA<-arima(Serie_A,order = c(3,0,0))
 M6_SerieA
 
-M7_SerieA<-arima(Serie_A,order=c(2,1,0))
+M7_SerieA<-arima(Serie_A,order = c(3,0,1))
 M7_SerieA
 
-M8_SerieA<-arima(Serie_A,order=c(1,2,2))
+M8_SerieA<-arima(Serie_A,order = c(0,0,3))
 M8_SerieA
 
+M9_SerieA<-arima(Serie_A,order = c(1,0,3))
+M9_SerieA
 
-M1_SerieB<-arima(Serie_B_Diff,c(1,1,1))
-M1_SerieB #Hay raiz unitaria, por lo tanto no es estacionario
+M10_SerieA<-arima(Serie_A,order = c(3,0,3))
+M10_SerieA
+
+M11_SerieA<-arima(Serie_A,order = c(1,1,1))
+M11_SerieA
+
+M12_SerieA<-arima(Serie_A,order = c(2,1,1))
+M12_SerieA
+
+M13_SerieA<-arima(Serie_A,order = c(1,1,2))
+M13_SerieA
+
+M14_SerieA<-arima(Serie_A,order = c(2,1,2))
+M14_SerieA
+
+Serie_A_aic<-rbind(AIC(M1_SerieA,M2_SerieA,M3_SerieA,M4_SerieA,M5_SerieA,M6_SerieA,M7_SerieA,M8_SerieA,M9_SerieA,M10_SerieA),AIC(M11_SerieA,M12_SerieA,M13_SerieA,M14_SerieA))
+Serie_A_bic<-rbind(BIC(M1_SerieA,M2_SerieA,M3_SerieA,M4_SerieA,M5_SerieA,M6_SerieA,M7_SerieA,M8_SerieA,M9_SerieA,M10_SerieA),BIC(M11_SerieA,M12_SerieA,M13_SerieA,M14_SerieA))
+
+Modelo_Serie_A<-cbind(Serie_A_aic,Serie_A_bic)
+Modelo_Serie_A
+M8_SerieA
+
+#Observamos la FAC y la FACP de los residuos del modelo seleccionado
+par(mfrow = c(2,2))
+plot(acf(M8_SerieA$residuals))
+plot(pacf(M8_SerieA$residuals))
+
+#Hacemos analisis del modelo selecionado
+
+#Test sobre los coeficientes del modelo
+#Ho: Algun tita i es = 0
+#H1: Los tita i distintos de 0
+Test_Coef_M8<-t.test(M8_SerieA$coef)
+Test_Coef_M8 #El test, indica que la H1 es verdadera, por lo tanto los coeficientes son distintos de 0
+
+
+#Test de Ljung=Box
+#Utilice el estadístico q de Ljung-Box para comprobar si una serie de observaciones en un período de tiempo específico son aleatorias e independientes.
+#...Si las observaciones no son independientes, una observación puede estar correlacionada con otra observación k unidades de tiempo después,... 
+#...una relación que se denomina autocorrelación.
+
+#Ho: las autocorrelaciones son iguales a 0. Es decir, los datos son independientes
+#H1: No todos los datos son independientes
+
+#Si chi-cuadrado > alpha. No rechazo Ho
+
+Lyung_Box_Serie_A<-Box.test(M8_SerieA$residuals,type = "Ljung-Box",lag = 1)
+Lyung_Box_Serie_A #El p-value es mayor a 0.05, por lo tanto no rechazo HO y se puede decir, que no hay autocorrelacion entre los residuos
