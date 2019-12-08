@@ -2,6 +2,8 @@
 
 library(tseries)
 library(urca)
+library(ggplot2)
+library(forecast)
 
 Data<-read.csv2(file = "Grupo 13.csv")
 
@@ -107,48 +109,7 @@ for (i in 1:length(Detalle_trend_df@cval[1,])) {
   }
 }
 
-#Creamos distintos modelos
-M1_SerieA<-arima(Serie_A,order = c(1,0,0))
-M1_SerieA
 
-M2_SerieA<-arima(Serie_A,order = c(0,0,1))
-M2_SerieA
-
-M3_SerieA<-arima(Serie_A,order = c(1,0,1))
-M3_SerieA
-
-M3_SerieA<-arima(Serie_A,order = c(2,0,1))
-M3_SerieA
-
-M4_SerieA<-arima(Serie_A,order = c(1,0,2))
-M4_SerieA
-
-M5_SerieA<-arima(Serie_A,order = c(2,0,2))
-M5_SerieA
-
-M6_SerieA<-arima(Serie_A,order = c(3,0,0))
-M6_SerieA
-
-M7_SerieA<-arima(Serie_A,order = c(3,0,1))
-M7_SerieA
-
-M8_SerieA<-arima(Serie_A,order = c(0,0,3))
-M8_SerieA
-
-M9_SerieA<-arima(Serie_A,order = c(1,0,3))
-M9_SerieA
-
-M10_SerieA<-arima(Serie_A,order = c(3,0,3))
-M10_SerieA
-
-#Unificamos los AIC y los BIC
-Serie_A_aic<-AIC(M1_SerieA,M2_SerieA,M3_SerieA,M4_SerieA,M5_SerieA,M6_SerieA,M7_SerieA,M8_SerieA,M9_SerieA,M10_SerieA)
-Serie_A_bic<-BIC(M1_SerieA,M2_SerieA,M3_SerieA,M4_SerieA,M5_SerieA,M6_SerieA,M7_SerieA,M8_SerieA,M9_SerieA,M10_SerieA)
-
-#Comparamos los AIC y los BIC de los distintos modelos
-Modelo_Serie_A<-cbind(Serie_A_aic,Serie_A_bic)
-Modelo_Serie_A
-#El Modelo MA(3) es el que mejor ajusta, y un modelos MA siempre es estacionario
 
 #Esto es un intento de obtener los AIC y los BIC de varios modelos ARIMA sin necesidad de hacer 1 por 1. Todavia no esta terminado\
 
@@ -162,7 +123,98 @@ for (i in 0:5) {
       print(Modelo_Serie_A)
     }
   }
-}
+} #Siempre se selecciona el modelos con menor AIC y con menos BIC
+
+#El Modelo MA(3) es el que mejor ajusta, y un modelos MA siempre es estacionario
+
+#Observamos la FAC y la FACP de los residuos del modelo seleccionado
+par(mfrow = c(2,2))
+plot(acf(MA_3$residuals),main = "Autocorrelacion Modelo MA(3)")
+plot(pacf(MA_3$residuals),main = "Autocorrelacion parcial Modelo MA(3)")
+
+#Hacemos analisis del modelo selecionado
+
+#Test sobre los coeficientes del modelo
+#Ho: Algun tita i es = 0
+#H1: Los tita i distintos de 0
+Test_Coef_MA_3<-t.test(MA_3$coef)
+Test_Coef_MA_3 #El test, indica que la H1 es verdadera, por lo tanto los coeficientes son distintos de 0
+
+
+#Test de Ljung=Box
+#Utilice el estadístico q de Ljung-Box para comprobar si una serie de observaciones en un período de tiempo específico son aleatorias e independientes.
+#...Si las observaciones no son independientes, una observación puede estar correlacionada con otra observación k unidades de tiempo después,... 
+#...una relación que se denomina autocorrelación.
+
+#Ho: las autocorrelaciones son iguales a 0. Es decir, los datos son independientes
+#H1: No todos los datos son independientes
+
+#Si p-value > alpha. No rechazo Ho
+
+Lyung_Box_MA_3<-Box.test(MA_3$residuals,type = "Ljung-Box",lag = 1)
+Lyung_Box_MA_3 #El p-value es mayor a 0.05, por lo tanto no rechazo HO y se puede decir, que no hay autocorrelacion entre los residuos
+
+
+#Test de Jarque Bera
+#La prueba de Jarque-Bera es una prueba de bondad de ajuste para comprobar si una muestra de datos tiene la asimetría y la curtosis de una distribución normal.
+#Ho: Los errores tienen una distribucion normal
+#H1: no especifica
+
+#Si p-value > alpha. No rechazo Ho
+
+Jarque_Bera_MA_3<-jarque.bera.test(MA_3$residuals)
+Jarque_Bera_MA_3
+
+#Ho: Los errores tienen una distribucion normal
+#H1: no especifica
+
+#Si p-value > alpha. No rechazo Ho
+Test_Shapiro_MA_3<-shapiro.test(MA_3$residuals)
+Test_Shapiro_MA_3
+
+#Tanto el test de JB y el Shapiro, se rechaza la Ho de que siguen una distribucion normal
+
+par(mfrow = c(2,2)) #Para poder comparar las distitntas predicciones
+#Predicción para un horizonte
+Pre1<-forecast(MA_3, level = c(95,97.5,99), h = 1)
+plot(Pre1, main = "Prediccion 1 periodo")
+P1<-as.data.frame(Pre1)
+P1<-data.frame(P1[,6],P1[,4],P1[,2],P1[,1],P1[,3],P1[,5],P1[,7])
+colnames(P1)<-c("LI 99%","LI 97,5%","LI 95%","Predicción","LS 95%","LS 97,5%","LS 99%")
+P1
+#Predicción para dos horizontes
+Pre2<-forecast(MA_3, level = c(95,97.5,99), h = 2)
+plot(Pre2,main = "Prediccion 2 periodos")
+P2<-as.data.frame(Pre2)
+P2<-data.frame(P2[,6],P2[,4],P2[,2],P2[,1],P2[,3],P2[,5],P2[,7])
+colnames(P2)<-c("LI 99%","LI 97,5%","LI 95%","Predicción","LS 95%","LS 97,5%","LS 99%")
+P2
+#Predicción para cinco horizontes.
+Pre5<-forecast(MA_3, level = c(95,97.5,99), h = 5)
+plot(Pre5, main = "Prediccion 5 periodos")
+P5<-as.data.frame(Pre5)
+P5<-data.frame(P5[,6],P5[,4],P5[,2],P5[,1],P5[,3],P5[,5],P5[,7])
+colnames(P5)<-c("LI 99%","LI 97,5%","LI 95%","Predicción","LS 95%","LS 97,5%","LS 99%")
+P5
+#Predicción para diez horizontes.
+Pre10<-forecast(MA_3, level = c(95,97.5,99), h = 10)
+plot(Pre10, main = "Prediccion 10 periodos")
+P10<-as.data.frame(Pre10)
+P10<-data.frame(P10[,6],P10[,4],P10[,2],P10[,1],P10[,3],P10[,5],P10[,7])
+colnames(P10)<-c("LI 99%","LI 97,5%","LI 95%","Predicción","LS 95%","LS 97,5%","LS 99%")
+rownames(P10)<-c(1:10)
+
+
+par(mfrow=c(2,2))
+plot(MA_3$residuals,col="red",main="Residuos MA(3)")
+hist(MA_3$residuals,main="Histograma de los residuos")
+acf(MA_3$residuals,col="red",main="FAC de residuos")
+pacf(MA_3$residuals,col="red",main="FACP de Residuos")
+
+
+
+
+
 
 
 #Prueba de Dickey-Fuller Aumentado Serie B
