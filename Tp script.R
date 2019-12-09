@@ -30,7 +30,7 @@ Varianza<-var(Data1)
 colnames(Varianza)<-c("Var Serie A", "Var Serie B")
 
 #Unificamos lo calculado hasta ahora
-Analisis.Total<-data.frame(Analisis.1,Kurtosis,Varianza) 
+Analisis.Total<-data.frame(Analisis.1,Varianza) 
 
 #Graficamos el Boxplot
 par(mfrow = c(1,2))
