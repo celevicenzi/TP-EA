@@ -24,8 +24,6 @@ library(psych)
 Analisis.1<-describe(Data1,quant = c(0,0.25,0.5,0.75,1)) #Analisis descriptivo
 #skew es la asmimetria. Se encuentran cercanos a 0
 
-#Analizamos la Kurtosis de ambas series
-Kurtosis<-kurtosi(Data1) #Ambas son planicurticas
 
 #Varianza
 Varianza<-var(Data1)
