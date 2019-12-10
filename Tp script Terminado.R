@@ -35,13 +35,15 @@ library(psych)
 
 #ANÁLISIS DESCRIPTIVO#
 Analisis.1<-describe(Data1,quant = c(0,0.25,0.5,0.75,1)) #Analisis descriptivo
+Analisis.1
 #skew es la asmimetria. Se encuentran cercanos a 0
 
 #Varianza
 Varianza<-var(Data1)
 colnames(Varianza)<-c("Var Serie A", "Var Serie B")
-Varianza=matrix(c(Varianza[1,1],Varianza[2,2]),ncol=1,nrow=2)
 Covarianza=matrix(c(Varianza[1,2],Varianza[2,1]),ncol=1,nrow=2)
+Varianza=matrix(c(Varianza[1,1],Varianza[2,2]),ncol=1,nrow=2)
+
 
 #Unificamos lo calculado hasta ahora
 Analisis.Total<-data.frame(Analisis.1,Varianza,Covarianza) 
