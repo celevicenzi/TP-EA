@@ -33,16 +33,18 @@ plot(ts(Serie_B), main = "Serie B Grupo 13", col = "green")
 #install.packages("psych")
 library(psych)
 
-#AN罫ISIS DESCRIPTIVO#
+#AN脕LISIS DESCRIPTIVO#
 Analisis.1<-describe(Data1,quant = c(0,0.25,0.5,0.75,1)) #Analisis descriptivo
 #skew es la asmimetria. Se encuentran cercanos a 0
 
 #Varianza
 Varianza<-var(Data1)
 colnames(Varianza)<-c("Var Serie A", "Var Serie B")
+Varianza=matrix(c(Varianza[1,1],Varianza[2,2]),ncol=1,nrow=2)
+Covarianza=matrix(c(Varianza[1,2],Varianza[2,1]),ncol=1,nrow=2)
 
 #Unificamos lo calculado hasta ahora
-Analisis.Total<-data.frame(Analisis.1,Varianza) 
+Analisis.Total<-data.frame(Analisis.1,Varianza,Covarianza) 
 Analisis.Total
 #Cosas a considerar para el analisis: Media, desvio, varianza, simetria, kurtosis.
 
@@ -166,9 +168,9 @@ Test_Coef_MA_3 #El test, indica que la H1 es verdadera, por lo tanto los coefici
 
 
 #Test de Ljung=Box
-#Utilice el estad韘tico q de Ljung-Box para comprobar si una serie de observaciones en un per韔do de tiempo espec韋ico son aleatorias e independientes.
-#...Si las observaciones no son independientes, una observaci髇 puede estar correlacionada con otra observaci髇 k unidades de tiempo despu閟,... 
-#...una relaci髇 que se denomina autocorrelaci髇.
+#Utilice el estad铆stico q de Ljung-Box para comprobar si una serie de observaciones en un per铆odo de tiempo espec铆fico son aleatorias e independientes.
+#...Si las observaciones no son independientes, una observaci贸n puede estar correlacionada con otra observaci贸n k unidades de tiempo despu茅s,... 
+#...una relaci贸n que se denomina autocorrelaci贸n.
 
 #Ho: las autocorrelaciones son iguales a 0. Es decir, los datos son independientes
 #H1: No todos los datos son independientes
@@ -183,7 +185,7 @@ if (Lyung_Box_MA_3$p.value>0.05) {
 }
 
 #Test de Jarque Bera
-#La prueba de Jarque-Bera es una prueba de bondad de ajuste para comprobar si una muestra de datos tiene la asimetr韆 y la curtosis de una distribuci髇 normal.
+#La prueba de Jarque-Bera es una prueba de bondad de ajuste para comprobar si una muestra de datos tiene la asimetr铆a y la curtosis de una distribuci贸n normal.
 #Ho: Los errores tienen una distribucion normal
 #H1: no especifica
 
@@ -215,33 +217,33 @@ plot(density(Serie_A),main="Densidad",xlab="N=100",col="red")
 
 ?forecast
 par(mfrow = c(2,2)) #Para poder comparar las distitntas predicciones
-#Predicci髇 para un horizonte
+#Predicci贸n para un horizonte
 Pre1<-forecast(MA_3, level = c(95,97.5,99), h = 1) #Prediccion
 plot(Pre1, main = "Prediccion 1 periodo") #Grafico
 P1<-as.data.frame(Pre1) #Se hace data frame
 P1<-data.frame(P1[,6],P1[,4],P1[,2],P1[,1],P1[,3],P1[,5],P1[,7]) #Se ordenen las columnas
-colnames(P1)<-c("LI 99%","LI 97,5%","LI 95%","Predicci髇","LS 95%","LS 97,5%","LS 99%") #Se les asignan nuevos nombres para que sea entendible
+colnames(P1)<-c("LI 99%","LI 97,5%","LI 95%","Predicci贸n","LS 95%","LS 97,5%","LS 99%") #Se les asignan nuevos nombres para que sea entendible
 P1
-#Predicci髇 para dos horizontes
+#Predicci贸n para dos horizontes
 Pre2<-forecast(MA_3, level = c(95,97.5,99), h = 2)
 plot(Pre2,main = "Prediccion 2 periodos")
 P2<-as.data.frame(Pre2)
 P2<-data.frame(P2[,6],P2[,4],P2[,2],P2[,1],P2[,3],P2[,5],P2[,7])
-colnames(P2)<-c("LI 99%","LI 97,5%","LI 95%","Predicci髇","LS 95%","LS 97,5%","LS 99%")
+colnames(P2)<-c("LI 99%","LI 97,5%","LI 95%","Predicci贸n","LS 95%","LS 97,5%","LS 99%")
 P2
-#Predicci髇 para tres horizontes.
+#Predicci贸n para tres horizontes.
 Pre3<-forecast(MA_3, level = c(95,97.5,99), h = 3)
 plot(Pre3, main = "Prediccion 3 periodos")
 P3<-as.data.frame(Pre3)
 P3<-data.frame(P3[,6],P3[,4],P3[,2],P3[,1],P3[,3],P3[,5],P3[,7])
-colnames(P3)<-c("LI 99%","LI 97,5%","LI 95%","Predicci髇","LS 95%","LS 97,5%","LS 99%")
+colnames(P3)<-c("LI 99%","LI 97,5%","LI 95%","Predicci贸n","LS 95%","LS 97,5%","LS 99%")
 P3
-#Predicci髇 para 20 horizontes.
+#Predicci贸n para 20 horizontes.
 Pre20<-forecast(MA_3, level = c(95,97.5,99), h = 20)
 plot(Pre20, main = "Prediccion 20 periodos")
 P20<-as.data.frame(Pre20)
 P20<-data.frame(P20[,6],P20[,4],P20[,2],P20[,1],P20[,3],P20[,5],P20[,7])
-colnames(P20)<-c("LI 99%","LI 97,5%","LI 95%","Predicci髇","LS 95%","LS 97,5%","LS 99%")
+colnames(P20)<-c("LI 99%","LI 97,5%","LI 95%","Predicci贸n","LS 95%","LS 97,5%","LS 99%")
 rownames(P20)<-c(1:20)
 P20
 
@@ -346,9 +348,9 @@ Test_Coef_ARIMA_011 #El test, indica que la H1 es verdadera, por lo tanto los co
 
 
 #Test de Ljung=Box
-#Utilice el estad韘tico q de Ljung-Box para comprobar si una serie de observaciones en un per韔do de tiempo espec韋ico son aleatorias e independientes.
-#...Si las observaciones no son independientes, una observaci髇 puede estar correlacionada con otra observaci髇 k unidades de tiempo despu閟,... 
-#...una relaci髇 que se denomina autocorrelaci髇.
+#Utilice el estad铆stico q de Ljung-Box para comprobar si una serie de observaciones en un per铆odo de tiempo espec铆fico son aleatorias e independientes.
+#...Si las observaciones no son independientes, una observaci贸n puede estar correlacionada con otra observaci贸n k unidades de tiempo despu茅s,... 
+#...una relaci贸n que se denomina autocorrelaci贸n.
 
 #Ho: las autocorrelaciones son iguales a 0. Es decir, los datos son independientes
 #H1: No todos los datos son independientes
@@ -363,7 +365,7 @@ if (Lyung_Box_ARIMA_011$p.value>0.05) {
 }
 
 #Test de Jarque Bera
-#La prueba de Jarque-Bera es una prueba de bondad de ajuste para comprobar si una muestra de datos tiene la asimetr韆 y la curtosis de una distribuci髇 normal.
+#La prueba de Jarque-Bera es una prueba de bondad de ajuste para comprobar si una muestra de datos tiene la asimetr铆a y la curtosis de una distribuci贸n normal.
 #Ho: Los errores tienen una distribucion normal
 #H1: no especifica
 
@@ -389,33 +391,33 @@ if (Test_Shapiro_ARIMA_011$p.value>0.05) {
 }
 
 par(mfrow = c(2,2)) #Para poder comparar las distitntas predicciones
-#Predicci髇 para un horizonte
+#Predicci贸n para un horizonte
 Pre1_B_Diff<-forecast(ARIMA_011, level = c(95,97.5,99), h = 1)
 plot(Pre1_B_Diff, main = "Prediccion 1 periodo")
 P1_B_Diff<-as.data.frame(Pre1_B_Diff)
 P1_B_Diff<-data.frame(P1_B_Diff[,6],P1_B_Diff[,4],P1_B_Diff[,2],P1_B_Diff[,1],P1_B_Diff[,3],P1_B_Diff[,5],P1_B_Diff[,7])
-colnames(P1_B_Diff)<-c("LI 99%","LI 97,5%","LI 95%","Predicci髇","LS 95%","LS 97,5%","LS 99%")
+colnames(P1_B_Diff)<-c("LI 99%","LI 97,5%","LI 95%","Predicci贸n","LS 95%","LS 97,5%","LS 99%")
 P1_B_Diff
-#Predicci髇 para dos horizontes
+#Predicci贸n para dos horizontes
 Pre2_B_Diff<-forecast(ARIMA_011, level = c(95,97.5,99), h = 2)
 plot(Pre2_B_Diff,main = "Prediccion 2 periodos")
 P2_B_Diff<-as.data.frame(Pre2_B_Diff)
 P2_B_Diff<-data.frame(P2_B_Diff[,6],P2_B_Diff[,4],P2_B_Diff[,2],P2_B_Diff[,1],P2_B_Diff[,3],P2_B_Diff[,5],P2_B_Diff[,7])
-colnames(P2_B_Diff)<-c("LI 99%","LI 97,5%","LI 95%","Predicci髇","LS 95%","LS 97,5%","LS 99%")
+colnames(P2_B_Diff)<-c("LI 99%","LI 97,5%","LI 95%","Predicci贸n","LS 95%","LS 97,5%","LS 99%")
 P2_B_Diff
-#Predicci髇 para tres horizontes.
+#Predicci贸n para tres horizontes.
 Pre3_B_Diff<-forecast(ARIMA_011, level = c(95,97.5,99), h = 3)
 plot(Pre3_B_Diff, main = "Prediccion 3 periodos")
 P3_B_Diff<-as.data.frame(Pre3_B_Diff)
 P3_B_Diff<-data.frame(P3_B_Diff[,6],P3_B_Diff[,4],P3_B_Diff[,2],P3_B_Diff[,1],P3_B_Diff[,3],P3_B_Diff[,5],P3_B_Diff[,7])
-colnames(P3_B_Diff)<-c("LI 99%","LI 97,5%","LI 95%","Predicci髇","LS 95%","LS 97,5%","LS 99%")
+colnames(P3_B_Diff)<-c("LI 99%","LI 97,5%","LI 95%","Predicci贸n","LS 95%","LS 97,5%","LS 99%")
 P3_B_Diff
-#Predicci髇 para 20 horizontes.
+#Predicci贸n para 20 horizontes.
 Pre20_B_Diff<-forecast(ARIMA_011, level = c(95,97.5,99), h = 20)
 plot(Pre20_B_Diff, main = "Prediccion 20 periodos")
 P20_B_Diff<-as.data.frame(Pre20_B_Diff)
 P20_B_Diff<-data.frame(P20_B_Diff[,6],P20_B_Diff[,4],P20_B_Diff[,2],P20_B_Diff[,1],P20_B_Diff[,3],P20_B_Diff[,5],P20_B_Diff[,7])
-colnames(P20_B_Diff)<-c("LI 99%","LI 97,5%","LI 95%","Predicci髇","LS 95%","LS 97,5%","LS 99%")
+colnames(P20_B_Diff)<-c("LI 99%","LI 97,5%","LI 95%","Predicci贸n","LS 95%","LS 97,5%","LS 99%")
 rownames(P20_B_Diff)<-c(1:20)
 P20_B_Diff
 
