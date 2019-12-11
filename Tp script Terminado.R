@@ -281,24 +281,39 @@ jarque.bera.test(modeloFinal$residuals)
 
 par(mfrow = c(2,2)) #Para poder comparar las distitntas predicciones
 #Predicción para un horizonte
-invPre1 <- forecast(modeloFinal, level = c(94,95,99), h = 1, lambda = 0.7, biasadj = T)
-plot(invPre1, main = "Horizonte 1")
+Pre1<-forecast(modeloFinal, level = c(94,95,99), h = 1) #Prediccion
+invPre1 <- list()
+invPre1$mean <-as.ts(InvBoxCox(Pre1$mean,lambda=0.7))
+invPre1$upper <- as.ts(InvBoxCox(Pre1$upper,lambda=0.7))
+invPre1$lower <- as.ts(InvBoxCox(Pre1$lower,lambda=0.7))
+plot(c(Serie_A,invPre1$mean))
+lines(c(Serie_A,invPre1$mean))
 invP1<-as.data.frame(invPre1) #Se hace data frame
-invP1<-data.frame(invP1[,6],invP1[,4],invP1[,2],invP1[,1],invP1[,3],invP1[,5],invP1[,7]) #Se ordenen las columnas
+invP1<-data.frame(invP1[,7],invP1[,6],invP1[,5],invP1[,1],invP1[,2],invP1[,3],invP1[,4]) #Se ordenen las columnas
 colnames(invP1)<-c("LI 99%","LI 95%","LI 94%","Predicción","LS 94%","LS 95%","LS 99%") #Se les asignan nuevos nombres para que sea entendible
 invP1
 #Predicción para dos horizontes
-invPre2 <- forecast(modeloFinal, level = c(94,95,99), h = 2, lambda = 0.7, biasadj = T)
-plot(invPre2, main = "Horizonte 2")
+Pre2<-forecast(modeloFinal, level = c(94,95,99), h = 2)
+invPre2 <- list()
+invPre2$mean <-as.ts(InvBoxCox(Pre2$mean,lambda=0.7))
+invPre2$upper <- as.ts(InvBoxCox(Pre2$upper,lambda=0.7))
+invPre2$lower <- as.ts(InvBoxCox(Pre2$lower,lambda=0.7))
+plot(c(Serie_A,invPre2$mean))
+lines(c(Serie_A,invPre2$mean))
 invP2<-as.data.frame(invPre2) #Se hace data frame
-invP2<-data.frame(invP2[,6],invP2[,4],invP2[,2],invP2[,1],invP2[,3],invP2[,5],invP2[,7]) #Se ordenen las columnas
+invP2<-data.frame(invP2[,7],invP2[,6],invP2[,5],invP2[,1],invP2[,2],invP2[,3],invP2[,4]) #Se ordenen las columnas
 colnames(invP2)<-c("LI 99%","LI 95%","LI 94%","Predicción","LS 94%","LS 95%","LS 99%") #Se les asignan nuevos nombres para que sea entendible
 invP2
 #Predicción para tres horizontes.
-invPre3 <- forecast(modeloFinal, level = c(94,95,99), h = 20, lambda = 0.7, biasadj = T)
-plot(invPre3, main = "Horizonte 20")
+Pre3<-forecast(modeloFinal, level = c(94,95,99), h = 20)
+invPre3 <- list()
+invPre3$mean <-as.ts(InvBoxCox(Pre3$mean,lambda=0.7))
+invPre3$upper <- as.ts(InvBoxCox(Pre3$upper,lambda=0.7))
+invPre3$lower <- as.ts(InvBoxCox(Pre3$lower,lambda=0.7))
+plot(c(Serie_A,invPre3$mean))
+lines(c(Serie_A,invPre3$mean))
 invP3<-as.data.frame(invPre3) #Se hace data frame
-invP3<-data.frame(invP3[,6],invP3[,4],invP3[,2],invP3[,1],invP3[,3],invP3[,5],invP3[,7]) #Se ordenen las columnas
+invP3<-data.frame(invP3[,7],invP3[,6],invP3[,5],invP3[,1],invP3[,2],invP3[,3],invP3[,4]) #Se ordenen las columnas
 colnames(invP3)<-c("LI 99%","LI 95%","LI 94%","Predicción","LS 94%","LS 95%","LS 99%") #Se les asignan nuevos nombres para que sea entendible
 invP3
 #Puede predecir hasta 3 períodos, porque se tiene un MA(3), y no tiene datos suficientes para continuar la prediccion, a menos que se utilice los datos antesriores obtenidos
@@ -447,6 +462,7 @@ par(mfrow = c(2,2)) #Para poder comparar las distitntas predicciones
 #Predicción para un horizonte
 Pre1_B_Diff<-forecast(ARIMA_001, level = c(94,95,99), h = 1)
 plot(Pre1_B_Diff, main = "Prediccion 1 periodo")
+Pre1_B <- list(Pre1_B_Diff$mean + Serie_B[100])
 P1_B_Diff<-as.data.frame(Pre1_B_Diff)
 P1_B_Diff<-data.frame(P1_B_Diff[,6],P1_B_Diff[,4],P1_B_Diff[,2],P1_B_Diff[,1],P1_B_Diff[,3],P1_B_Diff[,5],P1_B_Diff[,7])
 colnames(P1_B_Diff)<-c("LI 99%","LI 95%","LI 94%","Predicción","LS 94%","LS 95%","LS 99%")
@@ -480,8 +496,7 @@ write.csv2(P3,file = "Prediccion Serie B Diferenciada 3 periodo")
 write.csv2(P20,file = "Prediccion Serie B Diferenciada 20 periodo")
 
 par(mfrow=c(2,2))
-plot(ARIMA_001$residuals,col="red",main="Residuos MA(1)")
+plot(ARIMA_001$residuals,col="red",main="Residuos MA(3)")
 hist(ARIMA_001$residuals,main="Histograma de los residuos")
 acf(ARIMA_001$residuals,col="red",main="FAC de residuos")
 pacf(ARIMA_001$residuals,col="red",main="FACP de Residuos")
-
