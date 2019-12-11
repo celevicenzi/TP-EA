@@ -220,32 +220,32 @@ plot(density(Serie_A),main="Densidad",xlab="N=100",col="red")
 ?forecast
 par(mfrow = c(2,2)) #Para poder comparar las distitntas predicciones
 #Predicción para un horizonte
-Pre1<-forecast(MA_3, level = c(95,97.5,99), h = 1) #Prediccion
+Pre1<-forecast(MA_3, level = c(94,95,99), h = 1) #Prediccion
 plot(Pre1, main = "Prediccion 1 periodo") #Grafico
 P1<-as.data.frame(Pre1) #Se hace data frame
 P1<-data.frame(P1[,6],P1[,4],P1[,2],P1[,1],P1[,3],P1[,5],P1[,7]) #Se ordenen las columnas
-colnames(P1)<-c("LI 99%","LI 97,5%","LI 95%","Predicción","LS 95%","LS 97,5%","LS 99%") #Se les asignan nuevos nombres para que sea entendible
+colnames(P1)<-c("LI 99%","LI 95%","LI 94%","Predicción","LS 94%","LS 95%","LS 99%") #Se les asignan nuevos nombres para que sea entendible
 P1
 #Predicción para dos horizontes
-Pre2<-forecast(MA_3, level = c(95,97.5,99), h = 2)
+Pre2<-forecast(MA_3, level = c(94,95,99), h = 2)
 plot(Pre2,main = "Prediccion 2 periodos")
 P2<-as.data.frame(Pre2)
 P2<-data.frame(P2[,6],P2[,4],P2[,2],P2[,1],P2[,3],P2[,5],P2[,7])
-colnames(P2)<-c("LI 99%","LI 97,5%","LI 95%","Predicción","LS 95%","LS 97,5%","LS 99%")
+colnames(P2)<-c("LI 99%","LI 95%","LI 94%","Predicción","LS 94%","LS 95%","LS 99%")
 P2
 #Predicción para tres horizontes.
-Pre3<-forecast(MA_3, level = c(95,97.5,99), h = 3)
+Pre3<-forecast(MA_3, level = c(94,95,99), h = 3)
 plot(Pre3, main = "Prediccion 3 periodos")
 P3<-as.data.frame(Pre3)
 P3<-data.frame(P3[,6],P3[,4],P3[,2],P3[,1],P3[,3],P3[,5],P3[,7])
-colnames(P3)<-c("LI 99%","LI 97,5%","LI 95%","Predicción","LS 95%","LS 97,5%","LS 99%")
+colnames(P3)<-c("LI 99%","LI 95%","LI 94%","Predicción","LS 94%","LS 95%","LS 99%")
 P3
 #Predicción para 20 horizontes.
-Pre20<-forecast(MA_3, level = c(95,97.5,99), h = 20)
+Pre20<-forecast(MA_3, level = c(94,95,99), h = 20)
 plot(Pre20, main = "Prediccion 20 periodos")
 P20<-as.data.frame(Pre20)
 P20<-data.frame(P20[,6],P20[,4],P20[,2],P20[,1],P20[,3],P20[,5],P20[,7])
-colnames(P20)<-c("LI 99%","LI 97,5%","LI 95%","Predicción","LS 95%","LS 97,5%","LS 99%")
+colnames(P20)<-c("LI 99%","LI 95%","LI 94%","Predicción","LS 94%","LS 95%","LS 99%")
 rownames(P20)<-c(1:20)
 P20
 
@@ -267,7 +267,7 @@ pacf(MA_3$residuals,col="red",main="FACP de Residuos")
 auto.arima(Serie_B, stepwise = FALSE, approximation = FALSE,trace = TRUE)
 #Segun auto.arima, el mejor modelo es una ARIMA(0,1,1)
 ndiffs(Serie_B)
-#Segun ndiffs, no hay que diferenciar la serie
+#Segun ndiffs, hay que diferenciar la serie 1 vez
 
 Serie_B_Diff<-diff(Serie_B)
 
@@ -331,22 +331,22 @@ for (i in 1:length(Detalle_trend_df_B_Diff@cval[1,])) {
   #}
 #} #Siempre se selecciona el modelos con menor AIC y con menos BIC
 
-ARIMA_011<-auto.arima(Serie_B_Diff,stepwise = FALSE, approximation = FALSE,trace = TRUE)
+ARIMA_001<-auto.arima(Serie_B_Diff,stepwise = FALSE, approximation = FALSE,trace = TRUE)
 
-#El Modelo ARIMA(0,1,1) es el que mejor ajusta, y un modelos MA siempre es estacionario
+#El Modelo ARIMA(0,0,1) es el que mejor ajusta, y un modelo MA siempre es estacionario
 
 #Observamos la FAC y la FACP de los residuos del modelo seleccionado
 par(mfrow = c(2,2))
-plot(acf(ARIMA_011$residuals),main = "Autocorrelacion Modelo ARIMA(0,1,1)",col = "green")
-plot(pacf(ARIMA_011$residuals),main = "Autocorrelacion parcial Modelo ARIMA(0,1,1)",col = "green")
+plot(acf(ARIMA_001$residuals),main = "Autocorrelacion Modelo ARIMA(0,1,1)",col = "green")
+plot(pacf(ARIMA_001$residuals),main = "Autocorrelacion parcial Modelo ARIMA(0,1,1)",col = "green")
 
 #Hacemos analisis del modelo selecionado
 
 #Test sobre los coeficientes del modelo
 #Ho: Algun tita i es = 0
 #H1: Los tita i distintos de 0
-Test_Coef_ARIMA_011<-t.test(ARIMA_011$coef)
-Test_Coef_ARIMA_011 #El test, indica que la H1 es verdadera, por lo tanto los coeficientes son distintos de 0
+Test_Coef_ARIMA_001<-t.test(ARIMA_001$coef)
+Test_Coef_ARIMA_001 #El test, indica que la H1 es verdadera, por lo tanto los coeficientes son distintos de 0
 
 
 #Test de Ljung=Box
@@ -359,8 +359,8 @@ Test_Coef_ARIMA_011 #El test, indica que la H1 es verdadera, por lo tanto los co
 
 #Si p-value > alpha. No rechazo Ho
 
-Lyung_Box_ARIMA_011<-Box.test(ARIMA_011$residuals,type = "Ljung-Box",lag = 1)
-if (Lyung_Box_ARIMA_011$p.value>0.05) {
+Lyung_Box_ARIMA_001<-Box.test(ARIMA_001$residuals,type = "Ljung-Box",lag = 1)
+if (Lyung_Box_ARIMA_001$p.value>0.05) {
   print("No se rechaza la Ho, y por lo tanto no hay autocorrelacion entre los residuos")
 }else{
   print("Se rechaza la Ho, y por lo tanto hay autocorrelacion entre los residuos")
@@ -373,8 +373,8 @@ if (Lyung_Box_ARIMA_011$p.value>0.05) {
 
 #Si p-value > alpha. No rechazo Ho
 
-Jarque_Bera_ARIMA_011<-jarque.bera.test(ARIMA_011$residuals)
-if (Jarque_Bera_ARIMA_011$p.value>0.05) {
+Jarque_Bera_ARIMA_001<-jarque.bera.test(ARIMA_001$residuals)
+if (Jarque_Bera_ARIMA_001$p.value>0.05) {
   print("No se rechaza la Ho, y por lo tanto hay normalidad en los residuos")
 }else{
   print("Se rechaza la Ho, y por lo tanto los residuos tienen una distribucion distinta a la normal")
@@ -385,8 +385,8 @@ if (Jarque_Bera_ARIMA_011$p.value>0.05) {
 #H1: no especifica
 
 #Si p-value > alpha. No rechazo Ho
-Test_Shapiro_ARIMA_011<-shapiro.test(ARIMA_011$residuals)
-if (Test_Shapiro_ARIMA_011$p.value>0.05) {
+Test_Shapiro_ARIMA_001<-shapiro.test(ARIMA_001$residuals)
+if (Test_Shapiro_ARIMA_001$p.value>0.05) {
   print("No se rechaza la Ho, y por lo tanto hay normalidad en los residuos")
 }else{
   print("Se rechaza la Ho, y por lo tanto los residuos tienen una distribucion distinta a la normal")
@@ -394,32 +394,32 @@ if (Test_Shapiro_ARIMA_011$p.value>0.05) {
 
 par(mfrow = c(2,2)) #Para poder comparar las distitntas predicciones
 #Predicción para un horizonte
-Pre1_B_Diff<-forecast(ARIMA_011, level = c(95,97.5,99), h = 1)
+Pre1_B_Diff<-forecast(ARIMA_001, level = c(94,95,99), h = 1)
 plot(Pre1_B_Diff, main = "Prediccion 1 periodo")
 P1_B_Diff<-as.data.frame(Pre1_B_Diff)
 P1_B_Diff<-data.frame(P1_B_Diff[,6],P1_B_Diff[,4],P1_B_Diff[,2],P1_B_Diff[,1],P1_B_Diff[,3],P1_B_Diff[,5],P1_B_Diff[,7])
-colnames(P1_B_Diff)<-c("LI 99%","LI 97,5%","LI 95%","Predicción","LS 95%","LS 97,5%","LS 99%")
+colnames(P1_B_Diff)<-c("LI 99%","LI 95%","LI 94%","Predicción","LS 94%","LS 95%","LS 99%")
 P1_B_Diff
 #Predicción para dos horizontes
-Pre2_B_Diff<-forecast(ARIMA_011, level = c(95,97.5,99), h = 2)
+Pre2_B_Diff<-forecast(ARIMA_001, level = c(94,95,99), h = 2)
 plot(Pre2_B_Diff,main = "Prediccion 2 periodos")
 P2_B_Diff<-as.data.frame(Pre2_B_Diff)
 P2_B_Diff<-data.frame(P2_B_Diff[,6],P2_B_Diff[,4],P2_B_Diff[,2],P2_B_Diff[,1],P2_B_Diff[,3],P2_B_Diff[,5],P2_B_Diff[,7])
-colnames(P2_B_Diff)<-c("LI 99%","LI 97,5%","LI 95%","Predicción","LS 95%","LS 97,5%","LS 99%")
+colnames(P2_B_Diff)<-c("LI 99%","LI 95%","LI 94%","Predicción","LS 94%","LS 95%","LS 99%")
 P2_B_Diff
 #Predicción para tres horizontes.
-Pre3_B_Diff<-forecast(ARIMA_011, level = c(95,97.5,99), h = 3)
+Pre3_B_Diff<-forecast(ARIMA_001, level = c(94,95,99), h = 3)
 plot(Pre3_B_Diff, main = "Prediccion 3 periodos")
 P3_B_Diff<-as.data.frame(Pre3_B_Diff)
 P3_B_Diff<-data.frame(P3_B_Diff[,6],P3_B_Diff[,4],P3_B_Diff[,2],P3_B_Diff[,1],P3_B_Diff[,3],P3_B_Diff[,5],P3_B_Diff[,7])
-colnames(P3_B_Diff)<-c("LI 99%","LI 97,5%","LI 95%","Predicción","LS 95%","LS 97,5%","LS 99%")
+colnames(P3_B_Diff)<-c("LI 99%","LI 95%","LI 94%","Predicción","LS 94%","LS 95%","LS 99%")
 P3_B_Diff
 #Predicción para 20 horizontes.
-Pre20_B_Diff<-forecast(ARIMA_011, level = c(95,97.5,99), h = 20)
+Pre20_B_Diff<-forecast(ARIMA_001, level = c(94,95,99), h = 20)
 plot(Pre20_B_Diff, main = "Prediccion 20 periodos")
 P20_B_Diff<-as.data.frame(Pre20_B_Diff)
 P20_B_Diff<-data.frame(P20_B_Diff[,6],P20_B_Diff[,4],P20_B_Diff[,2],P20_B_Diff[,1],P20_B_Diff[,3],P20_B_Diff[,5],P20_B_Diff[,7])
-colnames(P20_B_Diff)<-c("LI 99%","LI 97,5%","LI 95%","Predicción","LS 95%","LS 97,5%","LS 99%")
+colnames(P20_B_Diff)<-c("LI 99%","LI 95%","LI 94%","Predicción","LS 94%","LS 95%","LS 99%")
 rownames(P20_B_Diff)<-c(1:20)
 P20_B_Diff
 
@@ -429,7 +429,7 @@ write.csv2(P3,file = "Prediccion Serie B Diferenciada 3 periodo")
 write.csv2(P20,file = "Prediccion Serie B Diferenciada 20 periodo")
 
 par(mfrow=c(2,2))
-plot(ARIMA_011$residuals,col="red",main="Residuos MA(3)")
-hist(ARIMA_011$residuals,main="Histograma de los residuos")
-acf(ARIMA_011$residuals,col="red",main="FAC de residuos")
-pacf(ARIMA_011$residuals,col="red",main="FACP de Residuos")
+plot(ARIMA_001$residuals,col="red",main="Residuos MA(3)")
+hist(ARIMA_001$residuals,main="Histograma de los residuos")
+acf(ARIMA_001$residuals,col="red",main="FAC de residuos")
+pacf(ARIMA_001$residuals,col="red",main="FACP de Residuos")
