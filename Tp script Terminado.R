@@ -217,7 +217,11 @@ par(mfrow = c(1,2))
 hist(Serie_A, breaks=20, main="Histograma Serie A ", col="red")
 plot(density(Serie_A),main="Densidad",xlab="N=100",col="red")
 
-?forecast
+transformacionSerieA <- BoxCox(Serie_A, lambda = "auto")
+modeloTransformadoA <- auto.arima(transformacionSerieA, stationary = T)
+jarque.bera.test(modeloTransformadoA$residuals)
+#La transformación de Box Cox con lambda automatizado tampoco genera un modelo con residuos de distribución normal.
+
 par(mfrow = c(2,2)) #Para poder comparar las distitntas predicciones
 #Predicción para un horizonte
 Pre1<-forecast(MA_3, level = c(94,95,99), h = 1) #Prediccion
