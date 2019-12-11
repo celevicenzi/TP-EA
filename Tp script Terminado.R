@@ -4,7 +4,7 @@
 #install.packages("urca")
 #install.packages("ggplot2")
 #install.packages("forecast")
-#install.packages("ploty")
+#install.packages("plotly")
 
 
 #Los bajamos al proyecto en el cual trabajaremos
