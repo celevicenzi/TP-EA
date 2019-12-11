@@ -217,10 +217,14 @@ par(mfrow = c(1,2))
 hist(Serie_A, breaks=20, main="Histograma Serie A ", col="red")
 plot(density(Serie_A),main="Densidad",xlab="N=100",col="red")
 
+#Box-Cox
 transformacionSerieA <- BoxCox(Serie_A, lambda = "auto")
 modeloTransformadoA <- auto.arima(transformacionSerieA, stationary = T)
 jarque.bera.test(modeloTransformadoA$residuals)
 #La transformación de Box Cox con lambda automatizado tampoco genera un modelo con residuos de distribución normal.
+serieNueva <- BoxCox(Serie_A, lambda = 0.7)
+modeloFinal <- auto.arima(serieNueva)
+jarque.bera.test(modeloFinal$residuals)
 
 par(mfrow = c(2,2)) #Para poder comparar las distitntas predicciones
 #Predicción para un horizonte
@@ -266,6 +270,64 @@ hist(MA_3$residuals,main="Histograma de los residuos")
 acf(MA_3$residuals,col="red",main="FAC de residuos")
 pacf(MA_3$residuals,col="red",main="FACP de Residuos")
 
+#Box-Cox
+transformacionSerieA <- BoxCox(Serie_A, lambda = "auto")
+modeloTransformadoA <- auto.arima(transformacionSerieA, stationary = T)
+jarque.bera.test(modeloTransformadoA$residuals)
+#La transformación de Box Cox con lambda automatizado tampoco genera un modelo con residuos de distribución normal.
+serieNueva <- BoxCox(Serie_A, lambda = 0.7)
+modeloFinal <- auto.arima(serieNueva, stationary = T)
+jarque.bera.test(modeloFinal$residuals)
+
+par(mfrow = c(2,2)) #Para poder comparar las distitntas predicciones
+#Predicción para un horizonte
+Pre1<-forecast(modeloFinal, level = c(94,95,99), h = 1) #Prediccion
+invPre1 <- list()
+invPre1$mean <-as.ts(InvBoxCox(Pre1$mean,lambda=0.7))
+invPre1$upper <- as.ts(InvBoxCox(Pre1$upper,lambda=0.7))
+invPre1$lower <- as.ts(InvBoxCox(Pre1$lower,lambda=0.7))
+plot(c(Serie_A,invPre1$mean))
+lines(c(Serie_A,invPre1$mean))
+invP1<-as.data.frame(invPre1) #Se hace data frame
+invP1<-data.frame(invP1[,7],invP1[,6],invP1[,5],invP1[,1],invP1[,2],invP1[,3],invP1[,4]) #Se ordenen las columnas
+colnames(invP1)<-c("LI 99%","LI 95%","LI 94%","Predicción","LS 94%","LS 95%","LS 99%") #Se les asignan nuevos nombres para que sea entendible
+invP1
+#Predicción para dos horizontes
+Pre2<-forecast(modeloFinal, level = c(94,95,99), h = 2)
+invPre2 <- list()
+invPre2$mean <-as.ts(InvBoxCox(Pre2$mean,lambda=0.7))
+invPre2$upper <- as.ts(InvBoxCox(Pre2$upper,lambda=0.7))
+invPre2$lower <- as.ts(InvBoxCox(Pre2$lower,lambda=0.7))
+plot(c(Serie_A,invPre2$mean))
+lines(c(Serie_A,invPre2$mean))
+invP2<-as.data.frame(invPre2) #Se hace data frame
+invP2<-data.frame(invP2[,7],invP2[,6],invP2[,5],invP2[,1],invP2[,2],invP2[,3],invP2[,4]) #Se ordenen las columnas
+colnames(invP2)<-c("LI 99%","LI 95%","LI 94%","Predicción","LS 94%","LS 95%","LS 99%") #Se les asignan nuevos nombres para que sea entendible
+invP2
+#Predicción para tres horizontes.
+Pre3<-forecast(modeloFinal, level = c(94,95,99), h = 20)
+invPre3 <- list()
+invPre3$mean <-as.ts(InvBoxCox(Pre3$mean,lambda=0.7))
+invPre3$upper <- as.ts(InvBoxCox(Pre3$upper,lambda=0.7))
+invPre3$lower <- as.ts(InvBoxCox(Pre3$lower,lambda=0.7))
+plot(c(Serie_A,invPre3$mean))
+lines(c(Serie_A,invPre3$mean))
+invP3<-as.data.frame(invPre3) #Se hace data frame
+invP3<-data.frame(invP3[,7],invP3[,6],invP3[,5],invP3[,1],invP3[,2],invP3[,3],invP3[,4]) #Se ordenen las columnas
+colnames(invP3)<-c("LI 99%","LI 95%","LI 94%","Predicción","LS 94%","LS 95%","LS 99%") #Se les asignan nuevos nombres para que sea entendible
+invP3
+#Puede predecir hasta 3 períodos, porque se tiene un MA(3), y no tiene datos suficientes para continuar la prediccion, a menos que se utilice los datos antesriores obtenidos
+
+write.csv2(P1,file = "Prediccion Serie A-BoxCox 1 periodo")
+write.csv2(P2,file = "Prediccion Serie A-BoxCox 2 periodo")
+write.csv2(P3,file = "Prediccion Serie A-BoxCox 3 periodo")
+write.csv2(P20,file = "Prediccion Serie A-BoxCox 20 periodo")
+
+par(mfrow=c(2,2))
+plot(MA_3$residuals,col="red",main="Residuos MA(3)")
+hist(MA_3$residuals,main="Histograma de los residuos")
+acf(MA_3$residuals,col="red",main="FAC de residuos")
+pacf(MA_3$residuals,col="red",main="FACP de Residuos")
 
 ##### SERIE B #####
 auto.arima(Serie_B, stepwise = FALSE, approximation = FALSE,trace = TRUE)
@@ -400,6 +462,7 @@ par(mfrow = c(2,2)) #Para poder comparar las distitntas predicciones
 #Predicción para un horizonte
 Pre1_B_Diff<-forecast(ARIMA_001, level = c(94,95,99), h = 1)
 plot(Pre1_B_Diff, main = "Prediccion 1 periodo")
+Pre1_B <- list(Pre1_B_Diff$mean + Serie_B[100])
 P1_B_Diff<-as.data.frame(Pre1_B_Diff)
 P1_B_Diff<-data.frame(P1_B_Diff[,6],P1_B_Diff[,4],P1_B_Diff[,2],P1_B_Diff[,1],P1_B_Diff[,3],P1_B_Diff[,5],P1_B_Diff[,7])
 colnames(P1_B_Diff)<-c("LI 99%","LI 95%","LI 94%","Predicción","LS 94%","LS 95%","LS 99%")
