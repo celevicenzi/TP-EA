@@ -217,14 +217,6 @@ par(mfrow = c(1,2))
 hist(Serie_A, breaks=20, main="Histograma Serie A ", col="red")
 plot(density(Serie_A),main="Densidad",xlab="N=100",col="red")
 
-#Box-Cox
-transformacionSerieA <- BoxCox(Serie_A, lambda = "auto")
-modeloTransformadoA <- auto.arima(transformacionSerieA, stationary = T)
-jarque.bera.test(modeloTransformadoA$residuals)
-#La transformación de Box Cox con lambda automatizado tampoco genera un modelo con residuos de distribución normal.
-serieNueva <- BoxCox(Serie_A, lambda = 0.7)
-modeloFinal <- auto.arima(serieNueva)
-jarque.bera.test(modeloFinal$residuals)
 
 par(mfrow = c(2,2)) #Para poder comparar las distitntas predicciones
 #Predicción para un horizonte
@@ -270,32 +262,33 @@ hist(MA_3$residuals,main="Histograma de los residuos")
 acf(MA_3$residuals,col="red",main="FAC de residuos")
 pacf(MA_3$residuals,col="red",main="FACP de Residuos")
 
+
 #Box-Cox
 transformacionSerieA <- BoxCox(Serie_A, lambda = "auto")
 modeloTransformadoA <- auto.arima(transformacionSerieA, stationary = T)
 jarque.bera.test(modeloTransformadoA$residuals)
 #La transformación de Box Cox con lambda automatizado tampoco genera un modelo con residuos de distribución normal.
-serieNueva <- BoxCox(Serie_A, lambda = 0.7)
+serieNueva <- BoxCox(Serie_A, lambda = 0.5)
 modeloFinal <- auto.arima(serieNueva, stationary = T)
 jarque.bera.test(modeloFinal$residuals)
 
 par(mfrow = c(2,2)) #Para poder comparar las distitntas predicciones
 #Predicción para un horizonte
-invPre1 <- forecast(modeloFinal, level = c(94,95,99), h = 1, lambda = 0.7, biasadj = T)
+invPre1 <- forecast(modeloFinal, level = c(94,95,99), h = 1, lambda = 0.5, biasadj = T)
 plot(invPre1, main = "Horizonte 1")
 invP1<-as.data.frame(invPre1) #Se hace data frame
 invP1<-data.frame(invP1[,6],invP1[,4],invP1[,2],invP1[,1],invP1[,3],invP1[,5],invP1[,7]) #Se ordenen las columnas
 colnames(invP1)<-c("LI 99%","LI 95%","LI 94%","Predicción","LS 94%","LS 95%","LS 99%") #Se les asignan nuevos nombres para que sea entendible
 invP1
 #Predicción para dos horizontes
-invPre2 <- forecast(modeloFinal, level = c(94,95,99), h = 2, lambda = 0.7, biasadj = T)
+invPre2 <- forecast(modeloFinal, level = c(94,95,99), h = 2, lambda = 0.5, biasadj = T)
 plot(invPre2, main = "Horizonte 2")
 invP2<-as.data.frame(invPre2) #Se hace data frame
 invP2<-data.frame(invP2[,6],invP2[,4],invP2[,2],invP2[,1],invP2[,3],invP2[,5],invP2[,7]) #Se ordenen las columnas
 colnames(invP2)<-c("LI 99%","LI 95%","LI 94%","Predicción","LS 94%","LS 95%","LS 99%") #Se les asignan nuevos nombres para que sea entendible
 invP2
 #Predicción para tres horizontes.
-invPre3 <- forecast(modeloFinal, level = c(94,95,99), h = 20, lambda = 0.7, biasadj = T)
+invPre3 <- forecast(modeloFinal, level = c(94,95,99), h = 20, lambda = 0.5, biasadj = T)
 plot(invPre3, main = "Horizonte 20")
 invP3<-as.data.frame(invPre3) #Se hace data frame
 invP3<-data.frame(invP3[,6],invP3[,4],invP3[,2],invP3[,1],invP3[,3],invP3[,5],invP3[,7]) #Se ordenen las columnas
@@ -309,10 +302,10 @@ write.csv2(P3,file = "Prediccion Serie A-BoxCox 3 periodo")
 write.csv2(P20,file = "Prediccion Serie A-BoxCox 20 periodo")
 
 par(mfrow=c(2,2))
-plot(MA_3$residuals,col="red",main="Residuos MA(3)")
-hist(MA_3$residuals,main="Histograma de los residuos")
-acf(MA_3$residuals,col="red",main="FAC de residuos")
-pacf(MA_3$residuals,col="red",main="FACP de Residuos")
+plot(modeloFinal$residuals,col="red",main="Residuos MA(3)")
+hist(modeloFinal$residuals,main="Histograma de los residuos")
+acf(modeloFinal$residuals,col="red",main="FAC de residuos")
+pacf(modeloFinal$residuals,col="red",main="FACP de Residuos")
 
 ##### SERIE B #####
 auto.arima(Serie_B, stepwise = FALSE, approximation = FALSE,trace = TRUE)
