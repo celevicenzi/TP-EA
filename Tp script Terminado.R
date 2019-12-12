@@ -243,10 +243,10 @@ P20
 
 #Puede predecir hasta 3 periodos, porque se tiene un MA(3), y no tiene datos suficientes para continuar la prediccion, a menos que se utilice los datos antesriores obtenidos
 
-write.csv2(P1,file = "Prediccion Serie A 1 periodo")
-write.csv2(P2,file = "Prediccion Serie A 2 periodo")
-write.csv2(P3,file = "Prediccion Serie A 3 periodo")
-write.csv2(P20,file = "Prediccion Serie A 20 periodo")
+write.csv2(P1,file = "Prediccion Serie A 1 periodo.csv")
+write.csv2(P2,file = "Prediccion Serie A 2 periodo.csv")
+write.csv2(P3,file = "Prediccion Serie A 3 periodo.csv")
+write.csv2(P20,file = "Prediccion Serie A 20 periodo.csv")
 
 par(mfrow=c(2,2))
 plot(MA_3$residuals,col="red",main="Residuos MA(3)")
@@ -452,10 +452,10 @@ colnames(P20_B_Diff)<-c("LI 99%","LI 95%","LI 94%","Predicción","LS 94%","LS 95
 rownames(P20_B_Diff)<-c(1:20)
 P20_B_Diff
 
-write.csv2(P1,file = "Prediccion Serie B Diferenciada 1 periodo")
-write.csv2(P2,file = "Prediccion Serie B Diferenciada 2 periodo")
-write.csv2(P3,file = "Prediccion Serie B Diferenciada 3 periodo")
-write.csv2(P20,file = "Prediccion Serie B Diferenciada 20 periodo")
+write.csv2(P1,file = "Prediccion Serie B Diferenciada 1 periodo.csv")
+write.csv2(P2,file = "Prediccion Serie B Diferenciada 2 periodo.csv")
+write.csv2(P3,file = "Prediccion Serie B Diferenciada 3 periodo.csv")
+write.csv2(P20,file = "Prediccion Serie B Diferenciada 20 periodo.csv")
 
 par(mfrow=c(2,2))
 plot(ARIMA_001$residuals,col="red",main="Residuos MA(1)")
