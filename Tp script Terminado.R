@@ -162,11 +162,11 @@ plot(pacf(MA_3$residuals),main = "Autocorrelacion parcial Modelo MA(3)",col = "r
 
 #Hacemos analisis del modelo selecionado
 
-#Test sobre los coeficientes del modelo
+#Test de significatividad global
 #Ho: Algun tita i es = 0
-#H1: Los tita i distintos de 0
+#H1: Al menos un tita i distinto de 0
 Test_Coef_MA_3<-t.test(MA_3$coef)
-Test_Coef_MA_3 #El test, indica que la H1 es verdadera, por lo tanto los coeficientes son distintos de 0
+Test_Coef_MA_3 #El test arroja que los coeficientes no son significativos, ya que el p-value es muy grande
 
 
 #Test de Ljung=Box
