@@ -289,10 +289,10 @@ colnames(invP3)<-c("LI 99%","LI 95%","LI 94%","Predicción","LS 94%","LS 95%","L
 invP3
 #Puede predecir hasta 3 períodos, porque se tiene un MA(3), y no tiene datos suficientes para continuar la prediccion, a menos que se utilice los datos antesriores obtenidos
 
-write.csv2(P1,file = "Prediccion Serie A-BoxCox 1 periodo")
-write.csv2(P2,file = "Prediccion Serie A-BoxCox 2 periodo")
-write.csv2(P3,file = "Prediccion Serie A-BoxCox 3 periodo")
-write.csv2(P20,file = "Prediccion Serie A-BoxCox 20 periodo")
+write.csv2(P1,file = "Prediccion Serie A-BoxCox 1 periodo.cvs")
+write.csv2(P2,file = "Prediccion Serie A-BoxCox 2 periodo.cvs")
+write.csv2(P3,file = "Prediccion Serie A-BoxCox 3 periodo.cvs")
+write.csv2(P20,file = "Prediccion Serie A-BoxCox 20 periodo.cvs")
 
 par(mfrow=c(2,2))
 plot(modeloFinal$residuals,col="red",main="Residuos MA(3)")
