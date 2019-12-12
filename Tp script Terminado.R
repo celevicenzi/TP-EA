@@ -263,6 +263,7 @@ jarque.bera.test(modeloTransformadoA$residuals)
 serieNueva <- BoxCox(Serie_A, lambda = 0.5)
 modeloFinal <- auto.arima(serieNueva, stationary = T)
 jarque.bera.test(modeloFinal$residuals)
+Box.test(modeloFinal$residuals,type = "Ljung-Box",lag = 1)
 
 par(mfrow = c(2,2)) #Para poder comparar las distitntas predicciones
 #Predicción para un horizonte
