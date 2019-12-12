@@ -43,10 +43,10 @@ Varianza<-var(Data1)
 colnames(Varianza)<-c("Var Serie A", "Var Serie B")
 Covarianza=matrix(c(Varianza[1,2],Varianza[2,1]),ncol=1,nrow=2)
 Varianza=matrix(c(Varianza[1,1],Varianza[2,2]),ncol=1,nrow=2)
-
+Desvio=sqrt(Varianza)
 
 #Unificamos lo calculado hasta ahora
-Analisis.Total<-data.frame(Analisis.1,Varianza,Covarianza) 
+Analisis.Total<-data.frame(Analisis.1,Varianza,Desvio,Covarianza) 
 Analisis.Total
 #Cosas a considerar para el analisis: Media, desvio, varianza, simetria, kurtosis.
 
